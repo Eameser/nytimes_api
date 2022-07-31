@@ -1,8 +1,8 @@
+import 'package:favorite_button/favorite_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nytimes_api/models/article_model.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../services/api_service.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -13,6 +13,16 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  //int currentPage = 1;
+  bool fav = false;
+  String art1 = 'All';
+  String art2 = 'Arts';
+  String art3 = 'Automobiles';
+  String art4 = 'Books';
+  String art5 = 'Business';
+  String art6 = 'Fashion';
+
+
   List<Article> _articles = [];
   List<Article> _searchArticles = [];
   var loading = false;
@@ -39,17 +49,18 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {});
       return;
     }
-    _articles.forEach((f) {
+    for (var f in _articles) {
       if (f.title!.contains(text) || f.summary!.contains(text)) {
         _searchArticles.add(f);
       }
-    });
+    }
 
     setState(() {});
   }
 
   _fetchAllArticles() async {
     List<Article> articles = await APIService().fetchAllArticles();
+    //currentPage++;
     setState(() {
       _articles = articles;
     });
@@ -64,9 +75,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _buildArticlesList(MediaQueryData mediaQuery) {
     List<Card> tiles = [];
-    _articles.forEach((article) {
+    for (var article in _articles) {
       tiles.add(_buildArticleTile(article, mediaQuery));
-    });
+    }
     return ListView(
       padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
       shrinkWrap: true,
@@ -77,9 +88,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _buildSearchArticlesList(MediaQueryData mediaQuery) {
     List<Card> tiles = [];
-    _searchArticles.forEach((article) {
+    for (var article in _searchArticles) {
       tiles.add(_buildSearchArticleTile(article, mediaQuery));
-    });
+    }
     return ListView(
       padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
       shrinkWrap: true,
@@ -312,6 +323,14 @@ class _HomeScreenState extends State<HomeScreen> {
     final mediaQuery = MediaQuery.of(context);
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () {
+                //Navigator.of(context).pop();
+              },
+              icon: Icon(Icons.favorite_border
+              ))
+        ],
         leading: Image.asset('assets/1.png', fit: BoxFit.cover),
         backgroundColor: Colors.black,
         title:
@@ -378,40 +397,78 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 2,
             )),
           ),
-          Container(
-
-              /// рубрики статей
-              padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+          Padding(
+            padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
                   ElevatedButton(
-                    child: Text('All'),
+                    child: Text(art1),
                     style: ElevatedButton.styleFrom(
                       primary: Colors.black,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0)),
                     ),
                     onPressed: () {
-                      //pulpSection = '';
                       _fetchAllArticles();
                     },
                   ),
-                  Spacer(),
+                  Padding(padding: EdgeInsets.fromLTRB(10, 0, 10, 0)),
                   ElevatedButton(
-                    child: Text('World'),
+                    child: Text(art2),
                     style: ElevatedButton.styleFrom(
                       primary: Colors.black,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0)),
                     ),
                     onPressed: () {
-                      pulpSection = 'world';
+                      pulpSection = 'arts';
                       _fetchSectionArticles(pulpSection);
                     },
                   ),
-                  Spacer(),
+                  Padding(padding: EdgeInsets.fromLTRB(10, 0, 10, 0)),
                   ElevatedButton(
-                    child: Text('Fashion'),
+                    child: Text(art3),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.black,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0)),
+                    ),
+                    onPressed: () {
+                      pulpSection = 'automobiles';
+                      _fetchSectionArticles(pulpSection);
+                    },
+                  ),
+                  Padding(padding: EdgeInsets.fromLTRB(10, 0, 10, 0)),
+                  ElevatedButton(
+                    child: Text(art4),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.black,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0)),
+                    ),
+                    onPressed: () {
+                      pulpSection = 'books';
+                      _fetchSectionArticles(pulpSection);
+                    },
+                  ),
+                  Padding(padding: EdgeInsets.fromLTRB(10, 0, 10, 0)),
+                  ElevatedButton(
+                    child: Text(art5),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.black,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0)),
+                    ),
+                    onPressed: () {
+                      pulpSection = 'business';
+                      _fetchSectionArticles(pulpSection);
+                    },
+                  ),
+                  Padding(padding: EdgeInsets.fromLTRB(10, 0, 10, 0)),
+                  ElevatedButton(
+                    child: Text(art6),
                     style: ElevatedButton.styleFrom(
                       primary: Colors.black,
                       shape: RoundedRectangleBorder(
@@ -422,28 +479,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       _fetchSectionArticles(pulpSection);
                     },
                   ),
-                  Spacer(),
-                  ElevatedButton(
-                    child: Text('Technology'),
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.black,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0)),
-                    ),
-                    onPressed: () {
-                      pulpSection = 'technology';
-                      _fetchSectionArticles(pulpSection);
-                    },
-                  ),
+                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 10, 0)),
                 ],
-              )),
-          SizedBox(
-            height: 15.0,
+              ),
+            ),
           ),
-          Expanded(
-              child: _searchArticles.length != 0 || controller.text.isNotEmpty
-                  ? _buildSearchArticlesList(mediaQuery)
-                  : _buildArticlesList(mediaQuery))
+          _searchArticles.isNotEmpty || controller.text.isNotEmpty
+              ? _buildSearchArticlesList(mediaQuery)
+              : _buildArticlesList(mediaQuery)
         ],
       ),
     );
